@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Scheduler.Models.Worker>
+
+@{
+    ViewBag.Title = "Workers Index";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (Scheduler.Models.Worker item in Model)
+    {
+        item.WorkerId = new Guid(string.Format("00000000-0000-0000-0000-00{0:0000000000}", item.ID));
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.ActionLink("Manage", "Manage", new { id = item.WorkerId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.WorkerId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.WorkerId })
+            </td>
+        </tr>
+    }
+
+</table>

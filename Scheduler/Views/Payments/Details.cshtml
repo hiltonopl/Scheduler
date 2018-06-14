@@ -1,0 +1,123 @@
+﻿@model Scheduler.Models.ViewModel.PaymentModelView
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>PaymentModelView</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ReceiptNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReceiptNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Payment1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Payment1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PaymentDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PaymentDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.JobID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.JobID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Reference)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Reference)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PaymentType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PaymentType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CollectedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CollectedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreationDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreationDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LastModifiedBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LastModifiedBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InvoiceID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InvoiceID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PaymentTypeID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PaymentTypeID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PaymentMethodId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PaymentMethodId)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

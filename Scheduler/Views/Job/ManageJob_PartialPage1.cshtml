@@ -1,0 +1,194 @@
+﻿@model Scheduler.Models.ListJobViewModel
+
+
+
+@{var pcs1 = 0;
+    var pce1 = 0;
+    //var thisdate = "2018-06-03";
+    //var thistimeslot = "9:00 - 10:00";
+
+    var x = (JobBlock)Model.JobBlocks.Where(o => o.Date == Model.thisdate &&  o.TimeSlot == Model.thistimeslot).FirstOrDefault();
+    if (x != null)
+    {
+        var job = Model.Jobs.Where(j => j.JobId.ToString() == x.JobId).FirstOrDefault();
+        var jobtype = Model.JobType.Where(k => k.Value.ToString() == x.JobId).FirstOrDefault();
+<li id="@x.JobId" draggable='true' class="list-group-item">
+    
+    <div id="jobresource">
+        @job.Name 
+        <ul id="workerlist" class="list-group">
+            @foreach (var y in Model.JobWorkers)
+        {
+            if (y.JobId == x.JobId.ToString())
+            {
+                <li id="@y.WorkerId" draggable='true' class="list-group-item">@y.Worker</li>
+
+            if (y.Worker == "Hilton")
+            {
+                pcs1 += 25;
+            }
+            if (y.Worker == "Barry")
+            {
+                pcs1 += 15;
+            }
+            if (y.Worker == "Gerry")
+            {
+                pcs1 += 35;
+            }
+        }
+    }
+
+        </ul>
+        <ul id="toollist" class="list-group">
+            @foreach (var y in Model.JobTools)
+        {
+            if (y.JobId == x.JobId.ToString())
+            {
+                <li id="@y.ToolId" draggable='true' class="list-group-item">@y.Tool</li>
+
+            if (y.Tool.Substring(0, 4) == "Long")
+            {
+                pce1 += 15;
+            }
+            if (y.Tool.Substring(0, 4) == "Trip")
+            {
+                pce1 += 5;
+            }
+        }
+    }
+
+        </ul>
+    </div>
+    <div id="jobdetails" style="position: relative;" draggable="false">
+
+        <table id="tableone" border="0" style="position: relative; bottom: 0">
+            <thead>
+                <tr>
+                    <th class="col1">Item</th>
+                    <th class="col2">Init/St</th>
+                    <th class="col3">Rem/End</th>
+                    <th class="col3">Payment</th>
+                </tr>
+            </thead>
+            <tr class="del">
+                <td id="PD" contenteditable="true"><strong>PD</strong></td>
+                @{var ps = 9;
+
+                    var cost = jobtype==null? 0 : jobtype.Rate * jobtype.WorkersRequired * jobtype.Duration + jobtype.ToolsCost + jobtype.FacilitiesCost;
+                    var price = jobtype == null ? 0 : jobtype.JobPrice;
+                    var pe = ps + (jobtype == null ? 0 : jobtype.Duration);
+                }
+                <td id="PS" contenteditable="false">@ps:00</td>
+
+                <td id="PE" contenteditable="false">@pe:00</td>
+
+                <td id="PymntFirst"><button class="PymntFirst" /></td>
+
+            </tr>
+
+            <tr class="del">
+                <td id="AD" contenteditable="true"><strong>AD</strong></td>
+                <td id="AS" contenteditable="false">@ps:00</td>
+
+                <td id="AE" contenteditable="false">@pe:00</td>
+                <td id="PymntSecond" contenteditable="false">0.00</td>
+            </tr>
+            <tr class="del">
+                <td id="PC" contenteditable="true"><strong>PC</strong></td>
+                <td id="PCS" contenteditable="false">£@cost</td>
+                <td id="PCE" contenteditable="false">£</td>
+                <td id="jobstartbtn"><button class="jobstartbtn">JS</button></td>
+            </tr>
+            <tr class="del">
+                <td id="AC" contenteditable="true"><strong>AC</strong></td>
+                <td id="PCS" contenteditable="false">£</td>
+                <td id="PCE" contenteditable="false">£</td>
+                <td id="jobendbtn"><button class="jobendbtn">JE</button></td>
+            </tr>
+            <tr class="del">
+                <td id="Price" contenteditable="true"><strong>Price</strong></td>
+                <td id="pricestart" contenteditable="false">£@price</td>
+                @{ var pri = (pcs1 + pce1) * 1.5;}
+                <td id="priceend" contenteditable="false">£</td>
+                <td id="editbtn"><button class="editbtn">Edit</button></td>
+            </tr>
+        </table>
+
+
+    </div>
+    <div id="divPayment" style="display:none">
+        <input type="hidden" id="hidID" />
+        <table>
+            <tr>
+                <td>Receipt No</td>
+                <td>
+                    <input type="text" id="txtReceiptNo" class="form-control" />
+                </td>
+            </tr>
+
+            <tr>
+                <td>Payment1</td>
+                <td>
+                    <input type="text" id="txtPayment1" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>Payment Date</td>
+                <td>
+                    <input type="text" id="txtPaymentDate" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>Job</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Reference</td>
+                <td>
+                    <input type="text" id="txtReference" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>Payment Type</td>
+                <td>
+                    <input type="text" id="txtPaymentType" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>Collected By</td>
+                <td>
+                    <input type="text" id="txtCollectedBy" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>Invoice Number</td>
+                <td>
+                    <input type="text" id="txtInvoiceNumber" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>Payment Type</td>
+                <td>
+                    @Html.DropDownListFor(o => o.PaymentType,
+                                                             new SelectList(Model.PaymentType, "Value", "Text"),
+                                                             "",
+                                                             new { id = "ddlPaymentType", @class = "form-control" })       /*PaymentTypeID */
+                </td>
+            </tr>
+            <tr>
+                <td>PaymentMethod</td>
+                <td>
+                    @Html.DropDownListFor(o => o.PaymentMethod,
+                                                              new SelectList(Model.PaymentMethod, "Value", "Text"),
+                                                              "",
+                                                              new { id = "ddlPaymentMethod", @class = "form-control" })   /*PaymentMethodID */
+                </td>
+            </tr>
+        </table>
+
+        <span class="alert-success">@ViewBag.Message</span>
+    </div>
+</li>
+    }
+}
+

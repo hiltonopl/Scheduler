@@ -1,0 +1,8 @@
+﻿@model Scheduler.Models.CreateJobViewModel
+<div class="form-group">
+    @Html.LabelFor(model => model.Workers, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.ListBoxFor(model => model.WorkerIds, Model.Workers, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Workers, "", new { @class = "text-danger" })
+    </div>
+</div>

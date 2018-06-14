@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="4713e45d451b4505a370bd1b397988c0" Name="Diagram1">
+        <EntityTypeShape EntityType="SchedulerModel.BLOCK" Width="1.5" PointX="0.75" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.CUSTOMER" Width="1.5" PointX="5.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.INVOICE" Width="1.5" PointX="10.5" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.JOB" Width="1.5" PointX="8.25" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.JOBBLOCK" Width="1.5" PointX="7.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.JOBTOOL" Width="1.5" PointX="2.75" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.JOBTYPE" Width="1.5" PointX="4.75" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.JOBWORKER" Width="1.5" PointX="6.75" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.LOOKUPRole" Width="1.5" PointX="3.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.PAYMENT" Width="1.5" PointX="8.75" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.PAYMENTMETHOD" Width="1.5" PointX="10.75" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.PAYMENTTYPE" Width="1.5" PointX="12.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.sysdiagram" Width="1.5" PointX="12.75" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.SYSUser" Width="1.5" PointX="0.75" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.SYSUserProfile" Width="1.5" PointX="3" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.SYSUserRole" Width="1.5" PointX="6" PointY="5.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.TOOL" Width="1.5" PointX="10.5" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.UserType" Width="1.5" PointX="0.75" PointY="2.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.MARKETER" Width="1.5" PointX="12.75" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="SchedulerModel.WORKER" Width="1.5" PointX="12.75" PointY="12" IsExpanded="true" />
+        <AssociationConnector Association="SchedulerModel.FK__INVOICE__JobID__489AC854" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__JOB__MarketerID__5224328E" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__JOB__ToolID__503BEA1C" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__JOB__WorkerID__51300E55" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__TOOL__JobID__4F47C5E3" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__SYSUserRo__LOOKU__02FC7413" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__SYSUserRo__LOOKU__68487DD7" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__SYSUserPr__SYSUs__628FA481" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__SYSUserRo__SYSUs__03F0984C" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__SYSUserRo__SYSUs__693CA210" ManuallyRouted="false" />
+        <AssociationConnector Association="SchedulerModel.FK__SYSUserPr__UserT__17036CC0" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

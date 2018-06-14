@@ -1,0 +1,769 @@
+﻿@model Scheduler.Models.ListJobViewModel
+
+
+@{
+    DateTime dt = DateTime.Now;
+
+    @Html.TextBox("mdate", String.Format("{0:d}", dt.ToString("yyyy-MM-dd")), new { @class = "datefield", type = "date" })
+}
+@{
+    ViewBag.Title = "Manage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Manage Jobs</h2>
+
+
+@Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.JobId)
+
+    <div class="form-group" id="divfirst">
+        @Html.LabelFor(model => model.Jobs, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <ul id="joblist" class="list-group">
+
+                @for (int i = 0; i < Model.Jobs.Count(); i++)
+                {
+
+                    var pcs = 0;
+                    var pce = 0;
+                    var x = Model.Jobs.ElementAt(i);
+                    if (Model.JobBlocks.ToList().Exists(jb => jb.JobId == x.JobId.ToString()))
+                    { continue; }
+                    var jobtype = Model.JobType.Where(k => k.Value == x.JobId).FirstOrDefault();
+                    <li id="@x.JobId" draggable='true' class="list-group-item">
+                        @x.Name
+                        <div id="jobresource">
+                            <ul id="workerlist" class="list-group">
+                                @foreach (var y in Model.JobWorkers)
+                                {
+                                    if (y.JobId == x.JobId.ToString())
+                                    {
+                                        <li id="@y.WorkerId" draggable='true' class="list-group-item">@y.Worker</li>
+
+                                        if (y.Worker == "Hilton")
+                                        {
+                                            pcs += 25;
+                                        }
+                                        if (y.Worker == "Barry")
+                                        {
+                                            pcs += 15;
+                                        }
+                                        if (y.Worker == "Gerry")
+                                        {
+                                            pcs += 35;
+                                        }
+                                    }
+                                }
+
+                            </ul>
+                            <ul id="toollist" class="list-group">
+                                @foreach (var y in Model.JobTools)
+                                {
+                                    if (y.JobId == x.JobId.ToString())
+                                    {
+                                        <li id="@y.ToolId" draggable='true' class="list-group-item">@y.Tool</li>
+
+                                        if (y.Tool.Substring(0, 4) == "Long")
+                                        {
+                                            pce += 15;
+                                        }
+                                        if (y.Tool.Substring(0, 4) == "Trip")
+                                        {
+                                            pce += 5;
+                                        }
+                                    }
+                                }
+
+                            </ul>
+                        </div>
+                        <div id="jobdetails" style="position: relative;" draggable="true">
+
+                            <table id="tableone" border="0" style="position: relative; bottom: 0">
+                                <thead>
+                                    <tr>
+                                        <th class="col1">Item</th>
+                                        <th class="col2">Init/St</th>
+                                        <th class="col3">Rem/End</th>
+                                        <th class="col3">Payment</th>
+                                    </tr>
+                                </thead>
+                                <tr class="del">
+                                    <td id="PD" contenteditable="true"><strong>PD</strong></td>
+                                    @{var ps = 9 + i;
+                                        var pe = ps + (jobtype == null ? 0 : jobtype.Duration);
+                                    }
+                                    <td id="PS" contenteditable="false">@ps:00</td>
+
+                                    <td id="PE" contenteditable="false">@pe:00</td>
+
+                                    <td id="PymntFirst"><button class="PymntFirst"/></td>
+
+                                </tr>
+
+                                <tr class="del">
+                                    <td id="AD" contenteditable="true"><strong>AD</strong></td>
+                                    <td id="AS" contenteditable="false">@ps:00</td>
+
+                                    <td id="AE" contenteditable="false">@pe:00</td>
+                                    <td id="PymntSecond" contenteditable="false">0.00</td>
+                                </tr>
+                                <tr class="del">
+                                    <td id="PC" contenteditable="true"><strong>PC</strong></td>
+                                  @{var myjobtype = jobtype == null ? 0 : jobtype.Rate * jobtype.WorkersRequired * jobtype.Duration + jobtype.ToolsCost + jobtype.FacilitiesCost;
+                                      var myjobprice = jobtype == null ? 0 : jobtype.JobPrice;
+                                  }
+                                    <td id="PCS" contenteditable="false">£@myjobtype</td>
+                                    <td id="PCE" contenteditable="false">£</td>
+                                    <td id="jobstartbtn"><button class="jobstartbtn">JS</button></td>
+                                </tr>
+                                <tr class="del">
+                                    <td id="AC" contenteditable="true"><strong>AC</strong></td>
+                                    <td id="PCS" contenteditable="false">£</td>
+                                    <td id="PCE" contenteditable="false">£</td>
+                                    <td id="jobendbtn"><button class="jobendbtn">JE</button></td>
+                                </tr>
+                                <tr class="del">
+                                    <td id="Price" contenteditable="true"><strong>Price</strong></td>
+                                    <td id="pricestart" contenteditable="false">£@myjobprice</td>
+                                    @{ var pri = (pcs + pce) * 1.5;}
+                                    <td id="priceend" contenteditable="false">£</td>
+                                    <td id="editbtn"><button class="editbtn">Edit</button></td>
+                                </tr>
+                            </table>
+
+
+                        </div>
+                        <div id="divPayment" style="display:none">
+                            <input type="hidden" id="hidID" />
+                            <table>
+                                <tr>
+                                    <td>Receipt No</td>
+                                    <td>
+                                        <input type="text" id="txtReceiptNo" class="form-control" />
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>Payment1</td>
+                                    <td>
+                                        <input type="text" id="txtPayment1" class="form-control" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Payment Date</td>
+                                    <td>
+                                        <input type="text" id="txtPaymentDate" class="form-control" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Job</td>
+                                    <td>
+                                        @* @Html.DropDownListFor(o => o.UserPaymentMethod.SelectedPaymentMethod,
+                                            new SelectList(Model.UserPaymentMethod.PaymentMethod, "Value", "Text"),
+                                            "",
+                                            new { id = "ddlPaymentMethod", @class = "form-control" })    //convert to Job  *@
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Reference</td>
+                                    <td>
+                                        <input type="text" id="txtReference" class="form-control" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Payment Type</td>
+                                    <td>
+                                        <input type="text" id="txtPaymentType" class="form-control" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Collected By</td>
+                                    <td>
+                                        <input type="text" id="txtCollectedBy" class="form-control" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Invoice Number</td>
+                                    <td>
+                                        <input type="text" id="txtInvoiceNumber" class="form-control" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Payment Type</td>
+                                    <td>
+                                        @Html.DropDownListFor(o => o.PaymentType,
+                                               new SelectList(Model.PaymentType, "Value", "Text"),
+                                               "",
+                                               new { id = "ddlPaymentType", @class = "form-control" })       @*PaymentTypeID *@
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>PaymentMethod</td>
+                                        <td>
+                                            @Html.DropDownListFor(o => o.PaymentMethod,
+                                                    new SelectList(Model.PaymentMethod, "Value", "Text"),
+                                                    "",
+                                                    new { id = "ddlPaymentMethod", @class = "form-control" })   @*PaymentMethodID  *@
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <span class="alert-success">@ViewBag.Message</span>
+                                    </div>
+                                </li>
+
+
+                            }
+            </ul>
+        </div>
+    </div>
+    <div class="form-group" id="divsecond">
+        @Html.LabelFor(model => model.Workers, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-2">
+            <ul id="workerlist" class="list-group">
+                @foreach (var x in Model.Workers)
+                {
+                    <li id="@x.WorkerId" draggable='true' class="list-group-item">@x.FirstName </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="form-group" id="divright">
+        @Html.LabelFor(model => model.Tools, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-2">
+            <ul id="toollist" class="list-group">
+                @foreach (var x in Model.Tools)
+                {
+                    <li id="@x.ToolId" draggable='true' class="list-group-item">@x.Name </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div id="jobcalendar" style="position: relative; float: right" draggable="false">
+
+        <table id="tabletwo" border="1" style="position: relative; right: 0">
+            <thead>
+                <tr>
+                    <th class="col1"></th>
+                    <th class="col1">@DateTime.Now.Date.ToString("yyyy-MM-dd")</th>
+                    <th class="col2">@DateTime.Now.AddDays(1).Date.ToString("yyyy-MM-dd")</th>
+                    <th class="col3">@DateTime.Now.AddDays(2).Date.ToString("yyyy-MM-dd")</th>
+                    <th class="col3">@DateTime.Now.AddDays(3).Date.ToString("yyyy-MM-dd")</th>
+                    <th class="col2">@DateTime.Now.AddDays(4).Date.ToString("yyyy-MM-dd")</th>
+                    <th class="col3">@DateTime.Now.AddDays(5).Date.ToString("yyyy-MM-dd")</th>
+                    <th class="col3">@DateTime.Now.AddDays(6).Date.ToString("yyyy-MM-dd")</th>
+                </tr>
+            </thead>
+            @for (var i = 0; i < 10; i++)
+    {
+        <tr class="del">
+            @{var pz = 9 + i;
+                var py = 9 + i + 1;
+                Model.thistimeslot = pz.ToString() + ":00 - " + py.ToString() + ":00";
+            }
+            <td contenteditable="true"><strong>@pz:00 - @py:00</strong></td>
+            @for (var j = 0; j < 7; j++)
+            {
+                Model.thisdate = @DateTime.Now.AddDays(j).Date.ToString("yyyy-MM-dd");
+                var pw = "book" + (i * 10 + j).ToString();
+        <td contenteditable="true">
+            <ul id=@pw>
+                @Html.Partial("ManageJob_PartialPage1", Model)
+
+
+
+
+
+            </ul>
+        </td>
+}
+        </tr>
+}
+        </table>
+
+ 
+    </div>
+
+    <div id="divdustbin" class="form-group">
+        <ul>
+            <li id="dustbin"><img src="~/Content/themes/base/images/dustbinandman.png" /></li>
+        </ul>
+    </div>
+</div>
+
+
+@Html.ActionLink("Add job", "Create", "Job")
+<br />
+@Html.ActionLink("Add customer", "CreateCustomer", "Account")
+<br />
+@Html.ActionLink("Manage jobs", "Index", "Job")
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+@Html.ActionLink("For Admins Only", "AdminOnly", "Home")
+
+
+
+<div>
+    @Html.ActionLink("Back to Workers List", "Index")
+</div>
+<style>
+    /*   ul.list-group:after {
+                clear: both;
+                display: block;
+                content: "";
+            }
+
+              .list-group-item {
+                float: left;
+            }
+        */
+    ul.list-group:after {
+        clear: both;
+        display: block;
+        content: "";
+    }
+
+    ul.list-group {
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    #jobresource ul.list-group {
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+
+    .list-group-item {
+        text-transform: capitalize;
+        background-color: rgb(0, 255, 255);
+        font-size: 0.9em;
+        text-align: left;
+        padding: 0px;
+        margin: 1px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    #jobresource .list-group-item {
+        font-size: 0.6em;
+        list-style-type: circle;
+    }
+
+
+    #divright .list-group-item {
+        background-color: #ffd800
+    }
+
+    #divsecond .list-group-item {
+        background-color: #b6ff00
+    }
+
+   #tableone {
+        font-size: 0.6em;
+        padding: 0px;
+        background-color: rgb(90, 255, 255)
+    }
+    #tabletwo {
+        border-style: solid
+
+    }
+
+   
+
+  #editbtn button {
+        background: none !important;
+        color: inherit;
+        border: none;
+        padding: 0 !important;
+        font: inherit;
+        /*border is optional*/
+        border-bottom: 1px solid #444;
+        cursor: pointer;
+    }
+    /*  .list-container {
+                display: inline-flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .list {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .list-item {
+                text-transform: capitalize;
+                background-color: rgb(200, 30, 40);
+                font-size: 1.3em;
+                text-align: left;
+                padding: 10px;
+                margin: 1px;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+              */
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        // debugger;
+        //   loadEmployee();
+        setEvents();
+        loaddetailform();
+        loadjobstart();
+        loadjobend();
+
+        //Function to set events for Drag-Drop
+        function setEvents() {
+            var JobList = $('li');
+            //Set Drag on Each 'li' in the Employeelist
+            $.each(JobList, function (idx, val) {
+                $('li').on('dragstart', function (evt) {
+                    evt.originalEvent.dataTransfer.setData("JobText", evt.target.parentElement.parentElement.parentElement.id);
+                    evt.originalEvent.dataTransfer.setData("Value", evt.target.textContent);
+                    evt.originalEvent.dataTransfer.setData("Text", evt.target.id);
+                    evt.originalEvent.dataTransfer.setData("Source", evt.target.parentElement.id);
+                    evt.originalEvent.dataTransfer.setData("Html", evt.target.innerHTML);
+                  //  evt.originalEvent.dataTransfer.setData("TimeSlot", evt.target.parentElement.children[0].children[0].innerHTML );
+                  //  evt.originalEvent.dataTransfer.setData("Date", evt.target.parentElement.parentElement.parentElement.children[0].children[0].children[evt.target.cellIndex].innerHTML);
+                    evt.target.draggable = false;
+                });
+            });
+            //Set the Drop on the <div>
+            $("#divright__").on('drop', function (evt) {
+                evt.preventDefault();
+                debugger;
+                var data = evt.originalEvent.dataTransfer.getData("Text");
+                var datadisplay = evt.originalEvent.dataTransfer.getData("Value");
+                var value = evt.originalEvent.target.id;
+                var lst = $("#toollist");
+                var li = "<li id=" + value + ">" + datadisplay + "</li>";
+                li.textContent = datadisplay;
+                lst.append(li);
+                $.post("/_a957632154/AssignTool",
+                    {
+                        JobId: data,
+                        ToolId: value
+                    },
+                    function (data, status) {
+                        alert("Data: " + data + "\nStatus: " + status);
+                    });
+
+            });
+            //The dragover
+            //$("#divright__").on('dragover', function (evt) {
+            //    evt.preventDefault();
+            //});
+            $("#jobcalendar").on('drop', function (evt) {
+                evt.preventDefault();
+                debugger;
+                var data = evt.originalEvent.dataTransfer.getData("Text");
+                var datadisplay = evt.originalEvent.dataTransfer.getData("Value");
+                var html = evt.originalEvent.dataTransfer.getData("Html");
+                var timeslot = evt.target.parentElement.children[0].children[0].innerHTML;
+                var date = evt.target.parentElement.parentElement.parentElement.children[0].children[0].children[evt.target.cellIndex].innerHTML;
+                var value = evt.originalEvent.target.id;
+                var anchor = evt.target.children[0].id;
+                var lst = $("#"+anchor);
+                var li = "<li id=" + value + ">" + html + "</li>";
+                li.textContent = html;
+                lst.append(li);
+                $.post("/_a957632154/AssignBlock",
+                    {
+                        JobId: data,
+                        Date: date,
+                        TimeSlot: timeslot
+                    },
+                    function (data, status) {
+                      //  alert("Data: " + data + "\nStatus: " + status);
+                        location.reload();
+                    });
+
+            });
+            //The dragover
+            $("#jobcalendar").on('dragover', function (evt) {
+                evt.preventDefault();
+            });
+
+            $("#divfirst").on('drop', function (evt) {
+                evt.preventDefault();
+                debugger;
+                var data = evt.originalEvent.dataTransfer.getData("Text");
+                var datadisplay = evt.originalEvent.dataTransfer.getData("Value");
+                var source = evt.originalEvent.dataTransfer.getData("Source");
+                var value = evt.originalEvent.target.id;
+                var rvalue = ReplaceAt(value, value.substr(1, 1) == "w" ? "w" : "t", "", 1, 1)
+                var lst = $("#" + value);
+                var li = "<ul><li id=" + value + ">" + datadisplay + "</li></ul>";
+                li.textContent = datadisplay;
+                if (source != "joblist")
+                    lst.append(li);
+                if (source == "toollist") {
+                    $.post("/_a957632154/AssignTool",
+                        {
+                            JobId: rvalue,
+                            ToolId: data
+                        },
+                        function (data, status) {
+                            //alert("Data: " + data + "\nStatus: " + status);
+                            if (status == "success") {
+                                console.log("Tool added");
+                            } else {
+                                console.log("Tool not added");
+                            }
+                            location.reload();
+                        });
+                }
+                else if (source == "workerlist") {
+                    $.post("/_a957632154/AssignWorker",
+                        {
+                            JobId: rvalue,
+                            WorkerId: data
+                        },
+                        function (data, status) {
+                            //alert("Data: " + data + "\nStatus: " + status);
+                            if (status == "success") {
+                                console.log("Worker added");
+                            } else {
+                                console.log("Worker not added");
+                            }
+                            location.reload();
+                        });
+                }
+
+            });
+            //       The dragover
+            $("#divfirst").on('dragover', function (evt) {
+                evt.preventDefault();
+            });
+
+            $("#divdustbin").on('drop', function (evt) {
+                evt.preventDefault();
+                debugger;
+                var data = evt.originalEvent.dataTransfer.getData("Text");
+                // var rdata = ReplaceAt(data, data.substr(1, 1) == "w+" ? "w+" : "t+", "", 1, 2)
+                var datadisplay = evt.originalEvent.dataTransfer.getData("Value");
+                var value = evt.originalEvent.dataTransfer.getData("JobText");
+                var source = evt.originalEvent.dataTransfer.getData("Source");
+                var rvalue = ReplaceAt(value, value.substr(1, 1) == "w" ? "w" : "t", "", 1, 2)
+                var lst = $("#dustbin");
+                var li = "<li id=" + value + ">" + datadisplay + "</li>";
+                li.textContent = datadisplay;
+                lst.append(li);
+                $.post("/_a957632154/DeleteAssignment",
+                    {
+                        JobId: value,
+                        AssignmentId: data,
+                        AssignmentType: source
+                    },
+                    function (data, status) {
+                        location.reload();
+                        //  alert("Data: " + data + "\nStatus: " + status);
+                    });
+
+            });
+            $("#divdustbin").on('dragover', function (evt) {
+                evt.preventDefault();
+            });
+        }
+        function loaddetailform() {
+            $('.editbtn').click(function () {
+                var currentTD = $(this).parents('table').find('td');
+                if ($(this).html() == 'Edit') {
+                    currentTD = $(this).parents('table').find('td');
+                    $.each(currentTD, function () {
+                        $(this).prop('contenteditable', true)
+                    });
+                } else {
+                    $.each(currentTD, function () {
+                        $(this).prop('contenteditable', false)
+                    });
+                }
+
+                $(this).html($(this).html() == 'Edit' ? 'Save' : 'Edit')
+
+            });
+        }
+        function loadjobstart() {
+            $('.jobstartbtn').click(function () {
+                var starttime = new Date();
+                $(this).parents('table').find('td#AS').html(starttime.getHours() + ':' + starttime.getMinutes())
+
+            });
+        }
+
+
+        function loadjobend() {
+            $('.jobendbtn').click(function () {
+                var endtime = new Date();
+                $(this).parents('table').find('td#AE').html(endtime.getHours() + ':' + endtime.getMinutes())
+
+            });
+        }
+        ///Function to load Employee using call to WEB API
+        function ReplaceAt(input, search, replace, start, end) {
+            return input.slice(0, start)
+                + input.slice(start, end).replace(search, replace)
+                + input.slice(end);
+        }
+        //function loadEmployee() {
+        //    var items = "";
+        //    var Id = "";
+        //    $.ajax({
+        //        url: "/Employee",
+        //        type: "GET"
+        //    }).done(function (resp) {
+        //        $.each(resp, function (idx, val) {
+        //            items += "<li id=" + val.EmployeeId + " draggable='true'>" + val.EmployeeName + "</li>";
+        //        });
+        //        $("#EmployeeList").html(items);
+        //        //$("#hdnID").html(Id);
+        //        setEvents();
+        //    }).error(function (err) {
+        //        alert("Error! " + err.status);
+        //    });
+        //}
+        //$(function () {
+        //    $(".datefield").datepicker();
+        //});
+
+         var initDialog = function (type) {
+                var title = type;
+                $("#divPayment").dialog({
+                    autoOpen: false,
+                    modal: true,
+                    title: type + ' Payment',
+                    width: 360,
+                    buttons: {
+                        Save: function () {
+                            var id = $("#hidID").val();
+                      //      var role = $("#ddlRoles").val();
+                            var paymentDate = $("#txtPaymentDate").val();
+                           // var loginPass = $("#txtPassword").val();
+                            var paymenttypeid = $("#ddlPaymentType").val();
+                            var receiptNo = $("#txtReceiptNo").val();
+                            var pymnt1 = $("#txtPayment1").val();
+                            var paymentMethod = $("#ddlPaymentMethod").val();
+                            var reference = $("#txtReference").val();
+                            var collectedBy = $("#txtCollectedBy").val();
+                            var invoiceNumber = $("#txtInvoiceNumber").val();
+
+                            UpdateUser(id, paymentDate, paymenttypeid, receiptNo, pymnt1,reference, collectedBy, invoiceNumber, paymentMethod);
+                            $(this).dialog("destroy");
+                        },
+                        Cancel: function () { $(this).dialog("destroy"); }
+                    }
+                });
+            }
+
+
+            function DeleteUser(id) {
+        $.ajax({
+            type: "POST",
+            url: "@(Url.Action("DeleteUser","Home"))",
+            data: {
+                            userID: id
+            },
+            success: function(data) {
+                $("#divUserListContainer").load("@(Url.Action("ManageUserPartial ","Home ", new { status ="delete" }))");
+                        },
+            error: function(error) { }
+                    });
+    }
+
+    $("a.lnkDelete").on("click", function() {
+                    var row = $(this).closest('tr');
+                    var id = row.find("td:eq(0)").html().trim();
+                    var answer = confirm("You are about to delete this user with ID " + id + " . Continue?");
+                    if (answer) DeleteUser(id);
+                    return false;
+                });
+
+
+
+            function UpdateUser(id, paymentDate, paymenttypeid, receiptNo, pymnt1, reference, paymentMethod) {
+                $.ajax({
+                        type: "POST",
+                    url: "@(Url.Action("UpdateUserData","Home"))",
+                    data: { userID: id, paymentDate: paymentDate, paymentTypeID: paymenttypeid, receiptNo: receiptNo, paymentNo1: pymnt1, collectedBy: collectedBy, invoiceNumber: invoiceNumber, paymentMethod: paymentMethod },
+                    success: function (data) {
+                        $("#divUserListContainer").load("@(Url.Action("ManageUserPartial","Home", new { status ="update" }))");
+                        },
+                    error: function (error) {
+                            //to do:
+                        }
+                    });
+                }
+
+            $(".PymntFirst").on("click", function () {
+                    initDialog("Edit");
+                $(".alert-success").empty();
+                    var row = $(this).closest('tr');
+
+                 $("#hidID").val(row.find("td:eq(0)").html().trim());
+                $("#txtPaymentDate").val(row.find("td:eq(1)").html().trim())
+             //   $("#txtPassword").val(row.find("td:eq(2)").html().trim())
+                $("#txtReceiptNo").val(row.find("td:eq(2)").html().trim())
+                $("#txtPayment1").val(row.find("td:eq(3)").html().trim())
+                $("#txtReference").val(row.find("td:eq(3)").html().trim())
+                $("#txtCollectedBy").val(row.find("td:eq(3)").html().trim())
+                $("#txtInvoiceNumber").val(row.find("td:eq(3)").html().trim())
+                $("#ddlPaymentMethod").val(row.find("td:eq(1)").html().trim())
+                $("#ddlPaymentType").val(row.find("td:eq(2)").html().trim())
+           //     $("#ddlRoles").val(row.find("td:eq(3)").val().trim());
+
+                $("#divPayment").dialog();
+                    return false;
+                });
+    });
+</script>
+
+
+@*<div id='DivIdToPrint'>
+        <p>This is a sample text for printing purpose.</p>
+    </div>
+    <p>Do not print.</p>
+    <input type='button' id='btn' value='Print' onclick='printDiv();'>
+    JavaScript
+
+    function printDiv()
+    {
+
+      var divToPrint=document.getElementById('DivIdToPrint');
+
+      var newWin=window.open('','Print-Window');
+
+      newWin.document.open();
+
+      newWin.document.write('
+    <html>
+    <body onload="window.print()">
+        '+divToPrint.innerHTML+'
+    </body>
+    </html>');
+
+      newWin.document.close();
+
+      setTimeout(function(){newWin.close();},10);
+
+    }*@
+
+@*Job/Manage/e956acf3-0b7e-2469-14c8-7382a1dfa3c5*@

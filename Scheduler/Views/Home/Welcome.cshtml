@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "Welcome";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Hi <b>@Context.User.Identity.Name</b>! Welcome to the Schedular App!</h2>
+<br />
+
+@Html.ActionLink("Signout", "SignOut", "Account")
+<br />
+@Html.ActionLink("Edit Profile", "EditProfile", "Home")
+<br />
+@Html.ActionLink("Add job", "Create", "Job")
+<br />
+@Html.ActionLink("Add customer", "CreateCustomer", "Account")
+<br />
+@Html.ActionLink("Manage jobs", "Index", "Job")
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+@Html.ActionLink("For Admins Only", "AdminOnly", "Home")
