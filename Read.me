@@ -1,1 +1,32 @@
-SQl Server SQL is in the scripts folder
+NB. SQl Server SQL is in the scripts folder
+
+
+The purpose of the Scheduler is to 
+
+1. provide a point and click method of tracking bookings for street jobs, 
+2. providing planned schedule, 
+3. alerts for schedule changes, 
+4. centrally set prices  (user selects the job type),
+5. record of payments received with accounting readout
+
+It is meant to eventually sit on a mobile phone, hence the move to transfer the app from mvc to web api.
+
+The active page is
+
+/jobs/index   where a selection of Manage for any worker  (this to be changed) will load the same Manage page
+which is where the point and click stuff happens
+
+You can drag and drop workers and tools to jobs, contributing to the actual costs, while prices are set by job type selection.
+when the job is initially booked. Created appear in a row of unscheduled jobs and these are dragged to the slot agreed with the customer
+TODO:  currently drag and drop workers and tools does not work when the job is in the calendar - to fix.
+To remove the job from the calendar, drag to the dustbin and it re-appears in unscheduled.
+
+Click the payment button to record payments, and print receipts.  All info has accounting codes assigned.
+rate changes are tracked in a dated rate history file to facilitate historic accounting.
+
+TODO: implement authentication and authorization with Web Api  and OWIN, implement all the database updates using web api.
+convert all razor to html + jquery or knockout or angular or similar and convert through
+
+i PhoneGap,
+ii.  Xamarin ?
+ 
