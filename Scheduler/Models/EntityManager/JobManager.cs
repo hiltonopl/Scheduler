@@ -27,10 +27,10 @@ namespace Scheduler.Models.EntityManager
                 CU.Address = user.Address;
                 CU.Email = user.Email;
                 CU.Mobile = user.Mobile;
-
+                CU.Notes = user.Notes;
                 db.CUSTOMERs.Add(CU);
                 db.SaveChanges();
-     
+                 
             }
         }
 

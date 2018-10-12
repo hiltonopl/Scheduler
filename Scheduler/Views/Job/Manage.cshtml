@@ -15,12 +15,12 @@
 
 
 @Html.AntiForgeryToken()
-
+@*Comment: THE JOB LIST*@
 <div class="form-horizontal">
 
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.HiddenFor(model => model.JobId)
-
+    @*Comment: within the list, the Job title*@
     <div class="form-group" id="divfirst">
         @Html.LabelFor(model => model.Jobs, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
@@ -35,193 +35,255 @@
                     if (Model.JobBlocks.ToList().Exists(jb => jb.JobId == x.JobId.ToString()))
                     { continue; }
                     var jobtype = Model.JobType.Where(k => k.Value == x.JobId).FirstOrDefault();
-                    <li id="@x.JobId" draggable='true' class="list-group-item">
-                        @x.Name
-                        <div id="jobresource">
-                            <ul id="workerlist" class="list-group">
-                                @foreach (var y in Model.JobWorkers)
-                                {
-                                    if (y.JobId == x.JobId.ToString())
-                                    {
-                                        <li id="@y.WorkerId" draggable='true' class="list-group-item">@y.Worker</li>
+                <li id="@x.JobId" draggable='true' class="list-group-item">
+                    @x.Name
+                    <div id="jobresource">
+                        <ul id="workerlist" class="list-group">
+                            @foreach (var y in Model.JobWorkers)
+            {
+                if (y.JobId == x.JobId.ToString())
+                {
+                    <li id="@y.WorkerId" draggable='true' class="list-group-item">@y.Worker</li>
 
-                                        if (y.Worker == "Hilton")
-                                        {
-                                            pcs += 25;
-                                        }
-                                        if (y.Worker == "Barry")
-                                        {
-                                            pcs += 15;
-                                        }
-                                        if (y.Worker == "Gerry")
-                                        {
-                                            pcs += 35;
-                                        }
-                                    }
+
+    ///Comment: Test to Allocate specific costs to individual workers  - To be removed
+    if (y.Worker == "Hilton")
+    {
+        pcs += 25;
+    }
+    if (y.Worker == "Barry")
+    {
+        pcs += 15;
+    }
+    if (y.Worker == "Gerry")
+    {
+        pcs += 35;
+    }
+}
+}
+
+                        </ul>
+                        <ul id="toollist" class="list-group">
+                            @foreach (var y in Model.JobTools)
+            {
+                if (y.JobId == x.JobId.ToString())
+                {
+                    <li id="@y.ToolId" draggable='true' class="list-group-item">@y.Tool</li>
+    ///Comment: Test to Allocate specific costs to individual tools  - To be removed
+
+    if (y.Tool.Substring(0, 4) == "Long")
+    {
+        pce += 15;
+    }
+    if (y.Tool.Substring(0, 4) == "Trip")
+    {
+        pce += 5;
+    }
+}
+}
+
+                        </ul>
+                    </div>
+                    @*Comment: JobDetails screen under each job in the job list*@
+                    <div id="jobdetails" style="position: relative;" draggable="true">
+
+                        <table id="tableone" border="0" style="position: relative; bottom: 0">
+                            <thead>
+                                <tr>
+                                    <th class="col1">Item</th>
+                                    <th class="col2">Init/St</th>
+                                    <th class="col3">Rem/End</th>
+                                    <th class="col3">Payment</th>
+                                </tr>
+                            </thead>
+                            <tr class="del">
+                                <td id="PD" contenteditable="true"><strong>PD</strong></td>
+                                @{var ps = 9 + i;
+                    var pe = ps + (jobtype == null ? 0 : jobtype.Duration);
                                 }
+                                <td id="PS" contenteditable="false">@ps:00</td>
 
-                            </ul>
-                            <ul id="toollist" class="list-group">
-                                @foreach (var y in Model.JobTools)
-                                {
-                                    if (y.JobId == x.JobId.ToString())
-                                    {
-                                        <li id="@y.ToolId" draggable='true' class="list-group-item">@y.Tool</li>
+                                <td id="PE" contenteditable="false">@pe:00</td>
 
-                                        if (y.Tool.Substring(0, 4) == "Long")
-                                        {
-                                            pce += 15;
-                                        }
-                                        if (y.Tool.Substring(0, 4) == "Trip")
-                                        {
-                                            pce += 5;
-                                        }
-                                    }
+                                <td id="PymntFirst"><button class="PymntFirst" /></td>
+
+                            </tr>
+
+                            <tr class="del">
+                                <td id="AD" contenteditable="true"><strong>AD</strong></td>
+                                <td id="AS" contenteditable="false">@ps:00</td>
+
+                                <td id="AE" contenteditable="false">@pe:00</td>
+                                <td id="PymntSecond" contenteditable="false">0.00</td>
+                            </tr>
+                            <tr class="del">
+                                <td id="PC" contenteditable="true"><strong>PC</strong></td>
+                                @{var myjobtype = jobtype == null ? 0 : jobtype.Rate * jobtype.WorkersRequired * jobtype.Duration + jobtype.ToolsCost + jobtype.FacilitiesCost;
+                    var myjobprice = jobtype == null ? 0 : jobtype.JobPrice;
                                 }
-
-                            </ul>
-                        </div>
-                        <div id="jobdetails" style="position: relative;" draggable="true">
-
-                            <table id="tableone" border="0" style="position: relative; bottom: 0">
-                                <thead>
-                                    <tr>
-                                        <th class="col1">Item</th>
-                                        <th class="col2">Init/St</th>
-                                        <th class="col3">Rem/End</th>
-                                        <th class="col3">Payment</th>
-                                    </tr>
-                                </thead>
-                                <tr class="del">
-                                    <td id="PD" contenteditable="true"><strong>PD</strong></td>
-                                    @{var ps = 9 + i;
-                                        var pe = ps + (jobtype == null ? 0 : jobtype.Duration);
-                                    }
-                                    <td id="PS" contenteditable="false">@ps:00</td>
-
-                                    <td id="PE" contenteditable="false">@pe:00</td>
-
-                                    <td id="PymntFirst"><button class="PymntFirst"/></td>
-
-                                </tr>
-
-                                <tr class="del">
-                                    <td id="AD" contenteditable="true"><strong>AD</strong></td>
-                                    <td id="AS" contenteditable="false">@ps:00</td>
-
-                                    <td id="AE" contenteditable="false">@pe:00</td>
-                                    <td id="PymntSecond" contenteditable="false">0.00</td>
-                                </tr>
-                                <tr class="del">
-                                    <td id="PC" contenteditable="true"><strong>PC</strong></td>
-                                  @{var myjobtype = jobtype == null ? 0 : jobtype.Rate * jobtype.WorkersRequired * jobtype.Duration + jobtype.ToolsCost + jobtype.FacilitiesCost;
-                                      var myjobprice = jobtype == null ? 0 : jobtype.JobPrice;
-                                  }
-                                    <td id="PCS" contenteditable="false">£@myjobtype</td>
-                                    <td id="PCE" contenteditable="false">£</td>
-                                    <td id="jobstartbtn"><button class="jobstartbtn">JS</button></td>
-                                </tr>
-                                <tr class="del">
-                                    <td id="AC" contenteditable="true"><strong>AC</strong></td>
-                                    <td id="PCS" contenteditable="false">£</td>
-                                    <td id="PCE" contenteditable="false">£</td>
-                                    <td id="jobendbtn"><button class="jobendbtn">JE</button></td>
-                                </tr>
-                                <tr class="del">
-                                    <td id="Price" contenteditable="true"><strong>Price</strong></td>
-                                    <td id="pricestart" contenteditable="false">£@myjobprice</td>
-                                    @{ var pri = (pcs + pce) * 1.5;}
-                                    <td id="priceend" contenteditable="false">£</td>
-                                    <td id="editbtn"><button class="editbtn">Edit</button></td>
-                                </tr>
-                            </table>
+                                <td id="PCS" contenteditable="false">£@myjobtype</td>
+                                <td id="PCE" contenteditable="false">£</td>
+                                <td id="jobstartbtn"><button class="jobstartbtn">JS</button></td>
+                            </tr>
+                            <tr class="del">
+                                <td id="AC" contenteditable="true"><strong>AC</strong></td>
+                                <td id="PCS" contenteditable="false">£</td>
+                                <td id="PCE" contenteditable="false">£</td>
+                                <td id="jobendbtn"><button class="jobendbtn">JE</button></td>
+                            </tr>
+                            <tr class="del">
+                                <td id="Price" contenteditable="true"><strong>Price</strong></td>
+                                <td id="pricestart" contenteditable="false">£@myjobprice</td>
+                                @{ var pri = (pcs + pce) * 1.5;}
+                                <td id="priceend" contenteditable="false">£</td>
+                                <td id="editbtn"><button class="editbtn">Edit</button></td>
+                            </tr>
+                        </table>
 
 
-                        </div>
-                        <div id="divPayment" style="display:none">
-                            <input type="hidden" id="hidID" />
-                            <table>
-                                <tr>
-                                    <td>Receipt No</td>
-                                    <td>
-                                        <input type="text" id="txtReceiptNo" class="form-control" />
-                                    </td>
-                                </tr>
+                    </div>
+                    @*Comment: NEW JOB POPUP*@
+                    <div id="divNewJob" style="display:none">
+                        <h2>Create New Job</h2>
+                        <hr />
 
-                                <tr>
-                                    <td>Payment1</td>
-                                    <td>
-                                        <input type="text" id="txtPayment1" class="form-control" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Payment Date</td>
-                                    <td>
-                                        <input type="text" id="txtPaymentDate" class="form-control" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Job</td>
-                                    <td>
-                                        @* @Html.DropDownListFor(o => o.UserPaymentMethod.SelectedPaymentMethod,
-                                            new SelectList(Model.UserPaymentMethod.PaymentMethod, "Value", "Text"),
-                                            "",
-                                            new { id = "ddlPaymentMethod", @class = "form-control" })    //convert to Job  *@
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Reference</td>
-                                    <td>
-                                        <input type="text" id="txtReference" class="form-control" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Payment Type</td>
-                                    <td>
-                                        <input type="text" id="txtPaymentType" class="form-control" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Collected By</td>
-                                    <td>
-                                        <input type="text" id="txtCollectedBy" class="form-control" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Invoice Number</td>
-                                    <td>
-                                        <input type="text" id="txtInvoiceNumber" class="form-control" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Payment Type</td>
-                                    <td>
-                                        @Html.DropDownListFor(o => o.PaymentType,
-                                               new SelectList(Model.PaymentType, "Value", "Text"),
-                                               "",
-                                               new { id = "ddlPaymentType", @class = "form-control" })       @*PaymentTypeID *@
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>PaymentMethod</td>
-                                        <td>
-                                            @Html.DropDownListFor(o => o.PaymentMethod,
-                                                    new SelectList(Model.PaymentMethod, "Value", "Text"),
-                                                    "",
-                                                    new { id = "ddlPaymentMethod", @class = "form-control" })   @*PaymentMethodID  *@
-                                                </td>
-                                            </tr>
-                                        </table>
+                        <form action="/Job/Create" method="post">
+                            <input name="__RequestVerificationToken" type="hidden" value="6JNHr6byxz7KrQ4zHE4xKytul7XMj6xjnWVtQpjtNUhWcfC6xjoR_sAoa2zuqKCjVVBe8tAdLaHE8mqS3s9Ktjm6IKRppPI2B1jxxefT0xY1" /><div class="form-horizontal">
 
-                                        <span class="alert-success">@ViewBag.Message</span>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" for="Description">Description</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control text-box single-line" id="Description" name="Description" type="text" value="" />
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="Description" data-valmsg-replace="true"></span>
                                     </div>
-                                </li>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" for="JobType">Job Type</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" data-val="true" data-val-required="The JobTypeID field is required." id="ddlJobType" name="JobTypeID">
+                                            <option value=""></option>
+                                            <option value="7ab477ce-3a55-4180-af4a-6b466842e4a4">Gardening</option>
+                                            <option value="9d6ee2e7-1e54-4d11-b525-9aa950941ef3">Grouting</option>
+                                            <option value="c1fa96e2-c5e4-4e76-a80e-ec4fe162d9db">Clearing away Garden waste</option>
+                                        </select><span class="field-validation-valid text-danger" data-valmsg-for="JobTypeID" data-valmsg-replace="true"></span>Add new Job Type <a href="/Job/CreateJobType">New Jobtype</a>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" for="Cost">Cost</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control text-box single-line" data-val="true" data-val-number="The field Cost must be a number." data-val-required="*" id="Cost" name="Cost" type="text" value="0.00" />
+                                        <span class="field-validation-valid text-danger" data-valmsg-for="Cost" data-valmsg-replace="true"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" for="CustomerID">Customer ID</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" data-val="true" data-val-required="*" id="ddlCustomer" name="CustomerID">
+                                            <option value=""></option>
+                                            <option selected="selected" value="00000000-0000-0000-0000-000000000000">George</option>
+                                            <option value="a0fca3ae-b002-4a82-b9f4-34923db5a888">Margaret</option>
+                                            <option value="5a52b0f2-d201-4e1a-a9ac-8e8de192e183">Peter</option>
+                                            <option value="ecf5aeec-fcb1-48b9-ac4a-c0a26e779b6c">Mary</option>
+                                            <option value="4f30d327-3107-4c13-8712-fb6e9387f992">Hilton</option>
+                                        </select><span class="field-validation-valid text-danger" data-valmsg-for="CustomerID" data-valmsg-replace="true"></span>            Add new Customer <a href="/Account/CreateCustomer">New Customer</a>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Create" class="btn btn-default" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
 
 
-                            }
+                    </div>
+                    @*Comment: PAYMENT POPUP*@
+                    <div id="divPayment" style="display:none">
+                        <input type="hidden" id="hidID" />
+                        <table>
+                            <tr>
+                                <td>Receipt No</td>
+                                <td>
+                                    <input type="text" id="txtReceiptNo" class="form-control" />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Payment1</td>
+                                <td>
+                                    <input type="text" id="txtPayment1" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Payment Date</td>
+                                <td>
+                                    <input type="text" id="txtPaymentDate" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Job</td>
+                                <td>
+                                    @* @Html.DropDownListFor(o => o.UserPaymentMethod.SelectedPaymentMethod,
+                        new SelectList(Model.UserPaymentMethod.PaymentMethod, "Value", "Text"),
+                        "",
+                        new { id = "ddlPaymentMethod", @class = "form-control" })    //convert to Job  *@
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Reference</td>
+                                <td>
+                                    <input type="text" id="txtReference" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Payment Type</td>
+                                <td>
+                                    <input type="text" id="txtPaymentType" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Collected By</td>
+                                <td>
+                                    <input type="text" id="txtCollectedBy" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Invoice Number</td>
+                                <td>
+                                    <input type="text" id="txtInvoiceNumber" class="form-control" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Payment Type</td>
+                                <td>
+                                    @Html.DropDownListFor(o => o.PaymentType,
+                               new SelectList(Model.PaymentType, "Value", "Text"),
+                               "",
+                               new { id = "ddlPaymentType", @class = "form-control" })       @*PaymentTypeID *@
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>PaymentMethod</td>
+                        <td>
+                            @Html.DropDownListFor(o => o.PaymentMethod,
+                        new SelectList(Model.PaymentMethod, "Value", "Text"),
+                        "",
+                        new { id = "ddlPaymentMethod", @class = "form-control" })   @*PaymentMethodID  *@
+                    </td>
+                </tr>
+                </table>
+
+                <span class="alert-success">@ViewBag.Message</span>
+                </div>   @*Comment: End of payment popup*@
+                </li>
+
+
+                        }
             </ul>
         </div>
     </div>
+    @*Comment: within the list, the Worker name*@
     <div class="form-group" id="divsecond">
         @Html.LabelFor(model => model.Workers, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-2">
@@ -233,6 +295,7 @@
             </ul>
         </div>
     </div>
+    @*Comment: within the list, the Tool name*@
     <div class="form-group" id="divright">
         @Html.LabelFor(model => model.Tools, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-2">
@@ -244,7 +307,7 @@
             </ul>
         </div>
     </div>
-
+    @*Comment: Calendar that holds the jobs dragged into it*@
     <div id="jobcalendar" style="position: relative; float: right" draggable="false">
 
         <table id="tabletwo" border="1" style="position: relative; right: 0">
@@ -261,35 +324,35 @@
                 </tr>
             </thead>
             @for (var i = 0; i < 10; i++)
-    {
-        <tr class="del">
-            @{var pz = 9 + i;
-                var py = 9 + i + 1;
-                Model.thistimeslot = pz.ToString() + ":00 - " + py.ToString() + ":00";
-            }
-            <td contenteditable="true"><strong>@pz:00 - @py:00</strong></td>
-            @for (var j = 0; j < 7; j++)
             {
-                Model.thisdate = @DateTime.Now.AddDays(j).Date.ToString("yyyy-MM-dd");
-                var pw = "book" + (i * 10 + j).ToString();
-        <td contenteditable="true">
-            <ul id=@pw>
-                @Html.Partial("ManageJob_PartialPage1", Model)
+                <tr class="del">
+                    @{var pz = 9 + i;
+                        var py = 9 + i + 1;
+                        Model.thistimeslot = pz.ToString() + ":00 - " + py.ToString() + ":00";
+                    }
+                    <td contenteditable="true"><strong>@pz:00 - @py:00</strong></td>
+                    @for (var j = 0; j < 7; j++)
+                    {
+                        Model.thisdate = @DateTime.Now.AddDays(j).Date.ToString("yyyy-MM-dd");
+                        var pw = "book" + (i * 10 + j).ToString();
+                        <td contenteditable="true">
+                            <ul id=@pw>
+                                @Html.Partial("ManageJob_PartialPage1", Model)
 
 
 
 
 
-            </ul>
-        </td>
-}
-        </tr>
-}
+                            </ul>
+                        </td>
+                    }
+                </tr>
+            }
         </table>
 
- 
-    </div>
 
+    </div>
+    @*Comment: dustbin for deleting jobs*@
     <div id="divdustbin" class="form-group">
         <ul>
             <li id="dustbin"><img src="~/Content/themes/base/images/dustbinandman.png" /></li>
@@ -673,6 +736,34 @@
                     }
                 });
             }
+
+
+         var initDialog2 = function (type) {
+             var title = type;
+             $("#divNewJob").dialog({
+                 autoOpen: false,
+                 modal: true,
+                 title: type + ' Payment',
+                 width: 360,
+                 buttons: {
+                     Save: function () {
+                        // var id = $("#hidID").val();
+                         //      var role = $("#ddlRoles").val();
+                         var description = $("#Description").val();
+                         // var loginPass = $("#txtPassword").val();
+                         var jobtypeid = $("#ddlJobType").val();
+                         var cost = $("#Cost").val();
+                         var customer = $("#ddlCustomer").val();
+                       
+
+                         UpdateUser(id, paymentDate, paymenttypeid, receiptNo, pymnt1, reference, collectedBy, invoiceNumber, paymentMethod);
+                         $(this).dialog("destroy");
+                     },
+                     Cancel: function () { $(this).dialog("destroy"); }
+                 }
+             });
+         }
+
 
 
             function DeleteUser(id) {

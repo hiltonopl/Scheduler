@@ -13,6 +13,7 @@ namespace Scheduler.Controllers
     public class HomeController : Controller
     {
         // GET: Home
+        [Authorize]
         public ActionResult Index()
         {
     /*        u.UserTypeOptions = new SelectList(

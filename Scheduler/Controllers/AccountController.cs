@@ -46,11 +46,12 @@ namespace Scheduler.Controllers
                 JobManager UM = new JobManager();
 
                 UM.AddCustomer(USV);
+              
 
 
             }
             return View();
-            
+           // return RedirectToAction("Create","Job");
         }
 
             public ActionResult LogIn()
@@ -73,7 +74,9 @@ namespace Scheduler.Controllers
                     if (ULV.Password.Equals(password))
                     {
                         FormsAuthentication.SetAuthCookie(ULV.LoginName, false);
-                        return RedirectToAction("Welcome", "Home");
+                        if (ULV.SYSUserID.GetType() != null)
+                            Session["UserID"] = ULV.SYSUserID.ToString();
+                        return RedirectToAction("Manage/00000000-0000-0000-0000-000000000001", "Job");
                     }
                     else
                     {
@@ -90,6 +93,7 @@ namespace Scheduler.Controllers
         public ActionResult SignOut()
         {
             FormsAuthentication.SignOut();
+            Session.RemoveAll();
             return RedirectToAction("Index", "Home");
         }
 

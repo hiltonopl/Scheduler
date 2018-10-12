@@ -367,7 +367,7 @@ string firstName, string lastName, string gender, int roleID = 0)
 
        
 
-        // GET: Jobs/
+       [Authorize]
         public ActionResult Create()
         {
             JobModelView JMV = new JobModelView();
@@ -383,38 +383,40 @@ string firstName, string lastName, string gender, int roleID = 0)
         // POST: Jobs/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create( JobModelView model)
+        public ActionResult Create(JobModelView model, string submitsource="" )
         {
             if (ModelState.IsValid)
             {
+                
+                    var job = new JOB()
+                    {
 
-                var job = new JOB()
-                {
-                           
-                    ID = Guid.NewGuid(),
-                    Description = model.Description,
-                    Cost = model.Cost,
-                    JobTypeID = model.JobTypeID,
-                    CustomerID = model.CustomerID,
-                    CreationDate = DateTime.Now,
-                    CreatedBy = User.Identity.Name,
-                    LastModifiedBy = User.Identity.Name
-                };
+                        ID = Guid.NewGuid(),
+                        Description = model.Description,
+                        Cost = model.Cost,
+                        JobTypeID = model.JobTypeID,
+                        CustomerID = model.CustomerID,
+                        CreationDate = DateTime.Now,
+                        CreatedBy = User.Identity.Name,
+                        LastModifiedBy = User.Identity.Name
+                    };
 
-                try
-                {
-                    db.JOBs.Add(job);
-                    db.SaveChanges();
+                    try
+                    {
+                        db.JOBs.Add(job);
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        return View("Error", new HandleErrorInfo(ex, "Job", "Manage/00000000-0000-0000-0000-000000000001"));
+                    }
+
+                    return RedirectToAction("Manage/00000000-0000-0000-0000-000000000001");
                 }
-                catch (Exception ex)
-                {
-                    return View("Error", new HandleErrorInfo(ex, "Jobs", "Index"));
-                }
-
-                return RedirectToAction("Index");
-            }
+           
             // Something failed, return
             return View(model);
         }
@@ -434,7 +436,7 @@ string firstName, string lastName, string gender, int roleID = 0)
             return View(new EditJobViewModel { JobId = job.ID.ToString(), Name = job.Description });
         }
 
-
+        [AuthorizeRoles("Admin")]
         public ActionResult CreateJobType()
         {
             return View();
@@ -520,7 +522,7 @@ string firstName, string lastName, string gender, int roleID = 0)
             return View(model);
         }
 
-
+        [Authorize]
         public ActionResult AddTool()
         {
             ToolModelView JMV = new ToolModelView();
@@ -569,6 +571,9 @@ string firstName, string lastName, string gender, int roleID = 0)
 
 
         // GET: Players/Edit/5
+    
+       
+        [Authorize]
         public ActionResult Manage(Guid? id)
         {
             if (id == null)

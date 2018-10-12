@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@{
+// Layout = null;
+//if( Session["userID"]==null && ViewBag.Title !="AdminOnly" && ViewBag.Title != "LogIn")
+//{
+//    Response.Redirect("~/Account/Login");
+//}
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -6,9 +13,11 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
     <script src="~/Scripts/jquery-1.12.4.min.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
     <link href="~/Content/themes/base/all.css" rel="stylesheet" />
 </head>
 <body>
@@ -29,6 +38,7 @@
     </div>
 
     <div class="container body-content">
+        @RenderSection("scripts", required: false)
         @RenderBody()
         <hr />
         <footer>
